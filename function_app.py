@@ -1,28 +1,92 @@
-import azure.functions as func
+import os
 import logging
+import azure.functions as func
+from django.core.wsgi import get_wsgi_application
+import json
 
-app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+# Set the Django settings module
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DEMO_py.settings')  # Ensure this path is correct
 
-@app.route(route="http_trigger")
-def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
+# Initialize Django
+import django
+django.setup()
+
+# Import your Django models here
+from DEMO_app.models import Employee  # Ensure this path is correct
+
+def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    name = req.params.get('name')
-    if not name:
+    if req.method == "POST":
         try:
             req_body = req.get_json()
+            fullname = req_body.get('fullname')
+            age = req_body.get('age')
+            designation = req_body.get('designation')
+            salary = req_body.get('salary')
+
+            if not all([fullname, age, designation, salary]):
+                return func.HttpResponse(
+                    json.dumps({"error": "Missing employee details in the request body."}),
+                    status_code=400,
+                    mimetype="application/json"
+                )
+
+            employee = Employee(
+                fullname=fullname,
+                age=age,
+                designation=designation,
+                salary=salary
+            )
+            employee.save()
+
+            return func.HttpResponse(
+                json.dumps({"message": f"Employee {fullname} created successfully."}),
+                status_code=201,
+                mimetype="application/json"
+            )
+
         except ValueError:
-            pass
+            return func.HttpResponse(
+                json.dumps({"error": "Invalid input. Please provide valid JSON."}),
+                status_code=400,
+                mimetype="application/json"
+            )
+
+    else:  # Handle GET requests
+        name = req.params.get('name')
+        if not name:
+            try:
+                req_body = req.get_json()
+            except ValueError:
+                pass
+            else:
+                name = req_body.get('name')
+
+        if name:
+            try:
+                employee = Employee.objects.get(fullname=name)
+                response_data = {
+                    "fullname": employee.fullname,
+                    "age": employee.age,
+                    "designation": employee.designation,
+                    "salary": employee.salary
+                }
+            except Employee.DoesNotExist:
+                return func.HttpResponse(
+                    json.dumps({"error": f"No employee found with the name {name}."}),
+                    status_code=404,
+                    mimetype="application/json"
+                )
+
+            return func.HttpResponse(
+                json.dumps(response_data),
+                status_code=200,
+                mimetype="application/json"
+            )
         else:
-            name = req_body.get('name')
-
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-    else:
-        return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
-        )
-
-
-
+            return func.HttpResponse(
+                json.dumps({"error": "No name provided."}),
+                status_code=400,
+                mimetype="application/json"
+            )
