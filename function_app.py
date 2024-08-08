@@ -1,92 +1,62 @@
-import os
-import logging
 import azure.functions as func
-from django.core.wsgi import get_wsgi_application
-import json
+import logging
+import pyodbc
+import os
 
-# Set the Django settings module
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DEMO_py.settings')  # Ensure this path is correct
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
-# Initialize Django
-import django
-django.setup()
-
-# Import your Django models here
-from DEMO_app.models import Employee  # Ensure this path is correct
-
-def main(req: func.HttpRequest) -> func.HttpResponse:
+@app.route(route="http_trigger")
+def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    if req.method == "POST":
+    # Retrieve the 'name' parameter from the request
+    name = req.params.get('name')
+    if not name:
         try:
             req_body = req.get_json()
-            fullname = req_body.get('fullname')
-            age = req_body.get('age')
-            designation = req_body.get('designation')
-            salary = req_body.get('salary')
-
-            if not all([fullname, age, designation, salary]):
-                return func.HttpResponse(
-                    json.dumps({"error": "Missing employee details in the request body."}),
-                    status_code=400,
-                    mimetype="application/json"
-                )
-
-            employee = Employee(
-                fullname=fullname,
-                age=age,
-                designation=designation,
-                salary=salary
-            )
-            employee.save()
-
-            return func.HttpResponse(
-                json.dumps({"message": f"Employee {fullname} created successfully."}),
-                status_code=201,
-                mimetype="application/json"
-            )
-
         except ValueError:
-            return func.HttpResponse(
-                json.dumps({"error": "Invalid input. Please provide valid JSON."}),
-                status_code=400,
-                mimetype="application/json"
-            )
-
-    else:  # Handle GET requests
-        name = req.params.get('name')
-        if not name:
-            try:
-                req_body = req.get_json()
-            except ValueError:
-                pass
-            else:
-                name = req_body.get('name')
-
-        if name:
-            try:
-                employee = Employee.objects.get(fullname=name)
-                response_data = {
-                    "fullname": employee.fullname,
-                    "age": employee.age,
-                    "designation": employee.designation,
-                    "salary": employee.salary
-                }
-            except Employee.DoesNotExist:
-                return func.HttpResponse(
-                    json.dumps({"error": f"No employee found with the name {name}."}),
-                    status_code=404,
-                    mimetype="application/json"
-                )
-
-            return func.HttpResponse(
-                json.dumps(response_data),
-                status_code=200,
-                mimetype="application/json"
-            )
+            pass
         else:
-            return func.HttpResponse(
-                json.dumps({"error": "No name provided."}),
-                status_code=400,
-                mimetype="application/json"
-            )
+            name = req_body.get('name')
+
+    # Database connection parameters
+    server = os.environ.get('DB_SERVER', 'localhost')
+    database = os.environ.get('DB_DATABASE', 'pro_1')
+    username = os.environ.get('DB_USERNAME', 'root')
+    password = os.environ.get('DB_PASSWORD', 'cogniwide@2024')
+    driver = os.environ.get('DB_DRIVER', 'MySQL ODBC 8.0 ANSI Driver')
+
+    # Attempt to connect to the database
+    try:
+        cnxn = pyodbc.connect(
+            f'DRIVER={driver};SERVER={server};PORT={3306};DATABASE={database};UID={username};PWD={password};'
+        )
+        cursor = cnxn.cursor()
+        
+
+        # Perform database operations here
+        # Example: Fetch all employees
+        cursor.execute("SELECT fullname FROM Employee")
+        rows = cursor.fetchall()
+
+        employee_names = [row.fullname for row in rows]
+        response_message = f"Employees: {', '.join(employee_names)}"
+
+        cursor.close()
+        cnxn.close()
+
+    except pyodbc.Error as e:
+        logging.error("Database connection failed:", e)
+        return func.HttpResponse(
+            "Database connection failed. Please check the logs for more details.",
+            status_code=500
+        )
+
+    # Return response based on the request
+    if name:
+        return func.HttpResponse(f"Hello, {name}. {response_message}")
+    else:
+        return func.HttpResponse(
+             f"This HTTP triggered function executed successfully. {response_message}",
+             status_code=200
+        )

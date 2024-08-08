@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 from django.conf import settings
 
@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_@mk4h7y5%73f-b^%2rdg!*4n^gt%_8))s(fu@g=#_xwemqgxn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
@@ -83,15 +83,30 @@ WSGI_APPLICATION = 'DEMO_py.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'sql_server.pyodbc',
+#         'NAME': 'db-1',  # Database name
+#         'HOST': 'db-1-server.database.windows.net',  # Hostname of the database server
+#         'USER': 'azureuser',  # Your database username
+#         'PASSWORD': 'password@123',  # Your database password
+#         'OPTIONS': {
+#             'driver': 'ODBC Driver 18 for SQL Server',
+#             'encrypt': True,
+#             'TrustServerCertificate': 'yes',
+#            },
+#     }
+# }
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sys',  # Replace with your database name
-        'USER': 'root',       # Replace with your database username
-        'PASSWORD': 'cogniwide@2024',  # Replace with your database password
-        'HOST': 'localhost',  # Replace with your database host
-        'PORT': '3306',  # Default port for MySQL on Azure
-
+        'NAME': os.getenv('DB_NAME', 'pro_1'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'cogniwide@2024'),
+        'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
 # from __future__ import annotations

@@ -1,9 +1,6 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
-
-
         {
             "name": "Attach to Chrome",
             "port": 9222,
@@ -38,7 +35,7 @@
             "request": "attach",
             "connect": {
                 "host": "localhost",
-                "port": 7071
+                "port": 9091
             },
             "preLaunchTask": "func: host start"
         }
