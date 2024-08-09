@@ -88,34 +88,37 @@ WSGI_APPLICATION = 'DEMO_py.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'sql_server.pyodbc',
-#         'NAME': 'db-1',  # Database name
-#         'HOST': 'db-1-server.database.windows.net',  # Hostname of the database server
-#         'USER': 'azureuser',  # Your database username
-#         'PASSWORD': 'password@123',  # Your database password
-#         'OPTIONS': {
-#             'driver': 'ODBC Driver 18 for SQL Server',
-#             'encrypt': True,
-#             'TrustServerCertificate': 'yes',
-#            },
-#     }
-# }
-
-
 DATABASES = {
     'default': {
-        
-       'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pro_1',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': 'cogniwide@2024',
-        'PORT': '3306',
-        
+        'ENGINE': 'sql_server.pyodbc',
+        'NAME': 'project-db',  # Database name
+        'USER': 'azureuser',  # Your database username
+        'PASSWORD': 'password@123',  # Your database password
+        'HOST': 'project-db-server.database.windows.net',  # Hostname of the database server
+        'PORT': '1433',  # Default port for SQL Server
+        'OPTIONS': {
+            'driver': 'ODBC Driver 18 for SQL Server',
+            'Encrypt': 'yes',
+            'TrustServerCertificate': 'no',
+            'Connection Timeout': 30,
+        },
     }
 }
+
+
+
+# DATABASES = {
+#     'default': {
+        
+#        'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'pro_1',
+#         'HOST': 'localhost',
+#         'USER': 'root',
+#         'PASSWORD': 'cogniwide@2024',
+#         'PORT': '3306',
+        
+#     }
+# }
 # from __future__ import annotations
 
 # import asyncio
