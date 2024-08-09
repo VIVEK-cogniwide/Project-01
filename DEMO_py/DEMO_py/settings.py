@@ -12,8 +12,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from django.conf import settings
+import sys
+import MySQLdb as Database
+sys.modules['MySQLdb'] = Database
 
-settings.DEBUG = False
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,12 +27,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_@mk4h7y5%73f-b^%2rdg!*4n^gt%_8))s(fu@g=#_xwemqgxn'
+SECRET_KEY = '#wylh*a4-=ipql*ygoy9j-*c9hh^p602-vf_euudi0_m@xobx@'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1','https://serverless-app-func.azurewebsites.net/api/http_trigger?name=azureuser']
 
 
 # Application definition
@@ -101,12 +106,14 @@ WSGI_APPLICATION = 'DEMO_py.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'pro_1'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'cogniwide@2024'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        
+       'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'pro_1',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': 'cogniwide@2024',
+        'PORT': '3306',
+        
     }
 }
 # from __future__ import annotations
