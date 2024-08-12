@@ -8,10 +8,10 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 def employee(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    # Base URL of your Django API
+    
     base_url = "http://127.0.0.1:8000/DEMO_app/employees/"
 
-    # Get parameters
+    
     employee_id = req.params.get('id')
     method = req.method.lower()
 
