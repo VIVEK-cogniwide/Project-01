@@ -1,5 +1,5 @@
 import azure.functions as func
-from azure_functions_django import get_wsgi_application # type: ignore
+from azure_functions_django import get_wsgi_application 
 
 app = get_wsgi_application()
 

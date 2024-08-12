@@ -33,7 +33,7 @@ SECRET_KEY = '#wylh*a4-=ipql*ygoy9j-*c9hh^p602-vf_euudi0_m@xobx@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','https://serverless-app-func.azurewebsites.net/api/http_trigger?name=azureuser']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'DEMO_app',
-    'debug_toolbar',
     'rest_framework',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -88,37 +88,34 @@ WSGI_APPLICATION = 'DEMO_py.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'project-db',  # Database name
-        'USER': 'azureuser',  # Your database username
-        'PASSWORD': 'password@123',  # Your database password
-        'HOST': 'project-db-server.database.windows.net',  # Hostname of the database server
-        'PORT': '1433',  # Default port for SQL Server
-        'OPTIONS': {
-            'driver': 'ODBC Driver 18 for SQL Server',
-            'Encrypt': 'yes',
-            'TrustServerCertificate': 'no',
-            'Connection Timeout': 30,
-        },
-    }
-}
-
-
-
 # DATABASES = {
 #     'default': {
-        
-#        'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'pro_1',
-#         'HOST': 'localhost',
-#         'USER': 'root',
-#         'PASSWORD': 'cogniwide@2024',
-#         'PORT': '3306',
-        
+#         'ENGINE': 'sql_server.pyodbc',
+#         'NAME': 'project-db',  # Database name
+#         'USER': 'azureuser',  # Your database username
+#         'PASSWORD': 'password@123',  # Your database password
+#         'HOST': 'project-db-server.database.windows.net',  # Hostname of the database server
+#         'PORT': '1433',  # Default port for SQL Server
+#         'OPTIONS': {
+#             'driver': 'ODBC Driver 17 for SQL Server',
+#         },
 #     }
 # }
+
+
+
+DATABASES = {
+    'default': {
+        
+       'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'pro_1',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': 'cogniwide@2024',
+        'PORT': '3306',
+        
+    }
+}
 # from __future__ import annotations
 
 # import asyncio
